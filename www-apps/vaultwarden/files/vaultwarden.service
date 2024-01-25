@@ -1,0 +1,26 @@
+[Unit]
+Description=Vaultwarden backend
+After=network.target postgresql.service
+
+[Service]
+Restart=on-failure
+User=vaultwarden
+
+WorkingDirectory=/var/lib/vaultwarden
+Environment="ENV_FILE=/etc/vaultwarden.cfg"
+Environment="DATA_FOLDER=/var/lib/vaultwarden"
+Environment="TMP_FOLDER=/var/tmp/vaultwarden"
+Environment="WEB_VAULT_FOLDER=/usr/lib/vaultwarden/web-vault/"
+
+ExecStart=/usr/bin/vaultwarden
+
+; Some security directives.
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+PrivateDevices=false
+CapabilityBoundingSet=~CAP_SYS_ADMIN
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
