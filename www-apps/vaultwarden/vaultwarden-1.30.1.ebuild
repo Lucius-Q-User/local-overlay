@@ -446,7 +446,7 @@ src_configure() {
 	local myfeatures=(
 		$(usev sqlite)
 		$(usev mysql)
-		$(usev postgresql)
+		$(usev postgres postgresql)
 	)
 
 	cargo_src_configure
