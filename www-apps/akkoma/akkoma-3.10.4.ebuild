@@ -160,6 +160,7 @@ done
 
 DEPEND="
 	dev-lang/elixir
+	dev-util/rebar
 	dev-erlang/hex
 	acct-user/akkoma
 	acct-group/akkoma
