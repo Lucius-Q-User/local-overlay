@@ -13,6 +13,11 @@ LICENSE="AGPL-3"
 SLOT="0"
 KEYWORDS="~amd64"
 
+FAST_HTML_VER="2.2.0"
+INETS_VER="9.1"
+OS_MON_VER="2.9.1"
+ELASTICSEARCH_VER="1.0.1"
+
 HEX_PKGS="
 mimerl@1.2.0
 argon2_elixir@3.1.0
@@ -133,7 +138,7 @@ cowboy@2.10.0
 inet_cidr@1.0.4
 bcrypt_elixir@3.0.1
 nimble_options@1.0.2
-fast_html@2.2.0
+fast_html@${FAST_HTML_VER}
 plug_static_index_html@1.0.0
 "
 
@@ -228,13 +233,14 @@ src_unpack() {
 src_compile() {
 	rel_dir="${WORKDIR}/release"
 	mkdir -p "${rel_dir}" || die
-    MIX_ENV=prod mix release --path "${rel_dir}" || die
+	MIX_ENV=prod mix release --path "${rel_dir}" || die
 }
 
 src_install() {
 	rel_dir="${WORKDIR}/release"
 	dest_dir="/usr/$(get_libdir)/akkoma"
 	insinto "${dest_dir}"
+	read erts_ver _my_ver <"${rel_dir}/releases/start_erl.data"
 	for dir in lib releases; do
 		doins -r "${rel_dir}/${dir}"
 	done
@@ -242,8 +248,8 @@ src_install() {
 	for file in "${rel_dir}/bin/"/*; do
 		doexe "$file"
 	done
-	exeinto "${dest_dir}/erts-14.2.1/bin"
-	for file in "${rel_dir}/erts-14.2.1/bin/"/*; do
+	exeinto "${dest_dir}/erts-${erts_ver}/bin"
+	for file in "${rel_dir}/erts-${erts_ver}/bin"/*; do
 		doexe "$file"
 	done
 	dosym "${dest_dir}/bin/pleroma" "/usr/bin/pleroma"
@@ -253,6 +259,12 @@ src_install() {
 	fperms 755 "${dest_dir}/releases/${PV}/elixir"
 	fperms 755 "${dest_dir}/releases/${PV}/iex"
 	fperms 755 "${dest_dir}/releases/${PV}/env.sh"
+
+	fperms 755 "${dest_dir}/lib/elasticsearch-${ELASTICSEARCH_VER}/priv/bin/wrap"
+	fperms 755 "${dest_dir}/lib/fast_html-${FAST_HTML_VER}/priv/fasthtml_worker"
+	fperms 755 "${dest_dir}/lib/inets-${INETS_VER}/priv/bin/runcgi.sh"
+	fperms 755 "${dest_dir}/lib/os_mon-${OS_MON_VER}/priv/bin/memsup"
+	fperms 755 "${dest_dir}/lib/os_mon-${OS_MON_VER}/priv/bin/cpu_sup"
 
 	systemd_dounit "${svc_file}"
 }
