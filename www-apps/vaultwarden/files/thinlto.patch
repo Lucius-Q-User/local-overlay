@@ -1,0 +1,14 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index 8eb905b0..0d6de598 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -169,8 +169,7 @@ rpassword = "7.3.1"
+ # Also enable fat LTO and use 1 codegen unit for optimizations
+ [profile.release]
+ strip = "debuginfo"
+-lto = "fat"
+-codegen-units = 1
++lto = "thin"
+ 
+ 
+ # A little bit of a speedup
